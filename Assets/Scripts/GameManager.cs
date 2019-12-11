@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     public float perfectHit;
     public float missHit;
 
+    public GameObject resultScreen;
+    public Text percentHitText, normalText, goodText, perfectText, missText, rankText, finalText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -55,6 +58,56 @@ public class GameManager : MonoBehaviour
                 theMuics.Play();
             }
         }
+        else
+        {
+            float totalHit = normalHit + goodHit + perfectHit;
+            if (totalNotes == totalHit + missHit)
+            {
+                theMuics.Stop();
+            }
+
+
+            if (!theMuics.isPlaying && !resultScreen.activeInHierarchy)
+            {
+                resultScreen.SetActive(true);
+
+                normalText.text = "" + normalHit;
+                goodText.text = "" + goodHit;
+                perfectText.text = "" + perfectHit;
+
+                missText.text = "" + missHit;
+
+
+                float percentHit = (totalHit / totalNotes) * 100f;
+
+                percentHitText.text = string.Format("{0:f1}%", percentHit);
+
+                string rankVal = "S";
+                if (percentHit < 95)
+                {
+                    rankVal = "A";
+                }
+                else if (percentHit < 85)
+                {
+                    rankVal = "B";
+                }
+                else if (percentHit < 70)
+                {
+                    rankVal = "C";
+                }
+                else if (percentHit < 55)
+                {
+                    rankVal = "D";
+                }
+                else if (percentHit < 40)
+                {
+                    rankVal = "F";
+                }
+
+                rankText.text = rankVal;
+                finalText.text = currentScore.ToString();
+            }
+        }
     }
 
     public void NoteHit()
@@ -79,24 +132,27 @@ public class GameManager : MonoBehaviour
     public void NormalHit()
     {
         currentScore += scorePerNote * currentMultiplier;
+        normalHit++;
         NoteHit();
     }
 
     public void GoodHit()
     {
         currentScore += scorePerGoodNote * currentMultiplier;
+        goodHit++;
         NoteHit();
     }
 
     public void PerfectHit()
     {
         currentScore += scorePerPerfectNote * currentMultiplier;
+        perfectHit++;
         NoteHit();
     }
 
     public void NoteMissed()
     {
-        Debug.Log("Missed note");
+        missHit++;
 
         currentMultiplier = 1;
         multiplierTracker = 0;
