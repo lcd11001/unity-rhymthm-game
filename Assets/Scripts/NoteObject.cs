@@ -20,6 +20,8 @@ public class NoteObject : MonoBehaviour
             if (canBePressed)
             {
                 gameObject.SetActive(false);
+
+                GameManager._instance.NoteHit();
             }
         }
     }
@@ -37,6 +39,11 @@ public class NoteObject : MonoBehaviour
         if (other.tag == "Activator")
         {
             canBePressed = false;
+
+            if (gameObject.activeSelf)
+            {
+                GameManager._instance.NoteMissed();
+            }
         }
     }
 }
